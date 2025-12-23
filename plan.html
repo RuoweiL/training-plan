@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>8周居家训练打卡（手机友好·标签版）</title>
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --card:#111827;
+      --muted:#94a3b8;
+      --text:#e5e7eb;
+      --accent:#22c55e;
+      --accent2:#60a5fa;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --border:rgba(148,163,184,.18);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
+      background: linear-gradient(180deg, #05070a 0%, var(--bg) 30%, #070a0f 100%);
+      color:var(--text);
+      line-height:1.55;
+      padding-bottom: 24px;
+    }
+    .top{
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(5,7,10,.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 10px 8px;
+    }
+    .title{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+      padding: 0 4px 8px;
+    }
+    .title h1{margin:0;font-size:16px;line-height:1.2}
+    .title .sub{color:var(--muted);font-size:12px;margin-top:4px}
+    .toggles{display:flex;gap:8px;align-items:center}
+    .switch{
+      display:inline-flex;gap:8px;align-items:center;
+      border:1px solid var(--border);
+      background: rgba(2,6,23,.35);
+      padding:8px 10px;
+      border-radius: 12px;
+      font-size:12px;
+      color:var(--text);
+      user-select:none;
+      cursor:pointer;
+    }
+    .switch input{width:18px;height:18px;accent-color:var(--warn)}
+    .tabs{
+      display:flex;
+      gap:8px;
+      overflow-x:auto;
+      padding: 6px 4px 4px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar{display:none}
+    .tab{
+      flex:0 0 auto;
+      padding:10px 12px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      background: rgba(2,6,23,.35);
+      color: var(--muted);
+      font-size: 13px;
+      cursor:pointer;
+      user-select:none;
+      white-space: nowrap;
+    }
+    .tab.active{
+      color: var(--text);
+      border-color: rgba(34,197,94,.55);
+      background: rgba(34,197,94,.12);
+    }
+
+    .wrap{max-width: 720px; margin: 0 auto; padding: 12px 12px 0; display:grid; gap:12px;}
+    .card{
+      background: rgba(17,24,39,.88);
+      border:1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    .head{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+      margin-bottom: 8px;
+    }
+    .head h2{margin:0;font-size:16px}
+    .badge{
+      font-size:12px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      color: var(--muted);
+    }
+    .note{color:var(--muted);font-size:12px;margin:8px 0 0}
+    .list{display:grid;gap:10px;margin-top:10px}
+    .item{
+      border:1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(2,6,23,.25);
+    }
+    .item-top{
+      display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap;
+    }
+    .item-name{
+      display:flex;gap:10px;align-items:flex-start;
+      font-weight: 700;
+    }
+    input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent)}
+    .meta{color:var(--muted);font-size:12px}
+    .hint{margin-top:8px;color:var(--muted);font-size:12px}
+    .hint b{color:var(--text)}
+    .hr{height:1px;background:var(--border);margin:12px 0}
+    .grid2{display:grid;gap:8px}
+    @media(min-width:520px){ .grid2{grid-template-columns:1fr 1fr;} }
+    .row{
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;
+    }
+    .pill{
+      font-size:12px;color:var(--muted);
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:6px 10px;
+      background: rgba(2,6,23,.35);
+    }
+    .pill strong{color:var(--text)}
+    .imgbox img{
+      width:100%;
+      height:auto;
+      border-radius: 14px;
+      border:1px solid var(--border);
+      display:block;
+      background:#0a0f16;
+    }
+    .btn{
+      display:inline-block;
+      padding:10px 12px;
+      border-radius: 12px;
+      border:1px solid var(--border);
+      background: rgba(2,6,23,.35);
+      color: var(--text);
+      font-size: 13px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .btn:active{transform: scale(.99)}
+    .danger{color:var(--danger)}
+    .warn{color:var(--warn)}
+    .hidden{display:none !important}
+    .kbd{
+      font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+      font-size:12px;
+      padding:2px 6px;
+      border:1px solid var(--border);
+      border-bottom-width:2px;
+      border-radius:8px;
+      background:rgba(2,6,23,.35);
+      color:var(--text);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top">
+    <div class="title">
+      <div>
+        <h1>8周居家训练打卡（标签版）</h1>
+        <div class="sub">看图/看行数→开练→打勾。勾选自动保存。</div>
+      </div>
+      <div class="toggles">
+        <label class="switch" title="经期时建议打开">
+          <input id="periodToggle" type="checkbox" />
+          经期模式
+        </label>
+      </div>
+    </div>
+
+    <div class="tabs" id="tabs">
+      <div class="tab active" data-panel="p1">周一</div>
+      <div class="tab" data-panel="p2">周二</div>
+      <div class="tab" data-panel="p3">周三</div>
+      <div class="tab" data-panel="p4">周四</div>
+      <div class="tab" data-panel="p5">周五</div>
+      <div class="tab" data-panel="p6">周六</div>
+      <div class="tab" data-panel="p7">周日</div>
+      <div class="tab" data-panel="pp">经期替换</div>
+      <div class="tab" data-panel="ov">总览图</div>
+      <div class="tab" data-panel="wk">周记录</div>
+    </div>
+  </div>
+
+  <main class="wrap">
+
+    <!-- 每日固定习惯（所有面板都可见的卡片） -->
+    <section class="card">
+      <div class="head">
+        <h2>每日固定习惯（每天都勾）</h2>
+        <span class="badge">越稳定越瘦</span>
+      </div>
+      <div class="grid2">
+        <label class="item-name"><input type="checkbox" data-save="habit_water" />喝水 ≥ 1500 ml</label>
+        <label class="item-name"><input type="checkbox" data-save="habit_protein" />蛋白质 ≥ 70 g</label>
+        <label class="item-name"><input type="checkbox" data-save="habit_steps" />步数 ≥ 8000</label>
+        <label class="item-name"><input type="checkbox" data-save="habit_core" />白天提醒：收腹 + 夹臀</label>
+      </div>
+      <div class="row">
+        <span class="pill"><strong>休息</strong> 组间60秒</span>
+        <span class="pill"><strong>策略</strong> 宁减一轮不跳过</span>
+        <span class="pill"><strong>提醒</strong> 体重不降也可能在变紧</span>
+      </div>
+    </section>
+
+    <!-- 面板：周一 -->
+    <section class="card panel" id="p1">
+      <div class="head">
+        <h2>周一｜下肢 + 臀</h2>
+        <span class="badge">40分钟</span>
+      </div>
+
+      <div class="list">
+        <div class="item">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p1_squat" />深蹲</div>
+            <div class="meta">15次 × 4组｜下2秒 上1秒</div>
+          </div>
+          <div class="hint">提示：<b>屁股向后坐</b>，膝盖不内扣，脚跟不抬。</div>
+        </div>
+
+        <div class="item">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p1_sumo" />相扑蹲</div>
+            <div class="meta">15次 × 4组</div>
+          </div>
+          <div class="hint">提示：脚尖微外，起身<b>夹臀</b>，收腹。</div>
+        </div>
+
+        <div class="item">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p1_lunge" />后撤弓步蹲</div>
+            <div class="meta">12次/边 × 4组</div>
+          </div>
+          <div class="hint">提示：用<b>前腿</b>发力上来，别借腰弹。</div>
+        </div>
+
+        <div class="item">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p1_bridge" />臀桥</div>
+            <div class="meta">20次 × 4组｜顶峰停1秒</div>
+          </div>
+          <div class="hint">提示：感觉在<b>夹屁股</b>，不是顶腰；肋骨别外翻。</div>
+        </div>
+
+        <div class="item">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p1_wallsit" />靠墙静蹲</div>
+            <div class="meta">45秒 × 4组</div>
+          </div>
+          <div class="hint">提示：腰贴墙、腹收紧；膝盖与脚尖同向。</div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+      <div class="note">热身5分钟（开合蹲/髋绕环/后踢腿）＋ 拉伸5分钟（大腿前侧/臀/腘绳肌）。</div>
+
+      <!-- 经期隐藏区：周一（经期尽量不做下肢强度） -->
+      <div class="note period-hide warn" style="margin-top:10px">
+        经期模式开启时：周一下肢训练建议改为「经期替换」里的轻活动/拉伸。
+      </div>
+    </section>
+
+    <!-- 面板：周二 -->
+    <section class="card panel hidden" id="p2">
+      <div class="head">
+        <h2>周二｜上肢 + 手臂</h2>
+        <span class="badge">35–40分钟</span>
+      </div>
+
+      <div class="list">
+        <div class="item">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p2_knee_pushup" />跪姿俯卧撑</div>
+            <div class="meta">12次 × 4组</div>
+          </div>
+          <div class="hint">提示：身体一条直线；推起时<b>呼气收腹</b>。</div>
+        </div>
+
+        <div class="item">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p2_close_pushup" />窄距俯卧撑</div>
+            <div class="meta">8–10次 × 3组</div>
+          </div>
+          <div class="hint">提示：主练手臂，不追求下太低；保持稳定。</div>
+        </div>
+
+        <div class="item">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p2_dips" />椅子臂屈伸</div>
+            <div class="meta">12次 × 4组</div>
+          </div>
+          <div class="hint">提示：肩不耸；后臂发热才对。</div>
+        </div>
+
+        <div class="item">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p2_arm_circles" />手臂画圈</div>
+            <div class="meta">40秒 × 4组</div>
+          </div>
+          <div class="hint">提示：手臂伸直，越慢越酸；别耸肩。</div>
+        </div>
+
+        <div class="item">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p2_plank" />平板支撑</div>
+            <div class="meta">40秒 × 4组</div>
+          </div>
+          <div class="hint">提示：肚脐向里收，腰不塌；<b>30秒标准</b>胜过1分钟塌腰。</div>
+        </div>
+      </div>
+
+      <div class="note">经期第1–2天不建议做长时间平板/俯卧撑，开启经期模式时请按「经期替换」执行。</div>
+    </section>
+
+    <!-- 面板：周三 -->
+    <section class="card panel hidden" id="p3">
+      <div class="head">
+        <h2>周三｜核心 + 有氧</h2>
+        <span class="badge">35分钟</span>
+      </div>
+
+      <div class="list">
+        <div class="item period-hard">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p3_deadbug" />死虫</div>
+            <div class="meta">12次/边 × 4组</div>
+          </div>
+          <div class="hint">提示：腰全程贴地；动作慢，腹部绷住。</div>
+        </div>
+
+        <div class="item period-hard">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p3_legraise" />仰卧抬腿</div>
+            <div class="meta">12次 × 4组</div>
+          </div>
+          <div class="hint">提示：下放慢；腰别拱起。</div>
+        </div>
+
+        <div class="item period-hard">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p3_twist" />俄罗斯转体（慢）</div>
+            <div class="meta">20次 × 4组</div>
+          </div>
+          <div class="hint">提示：转上半身不甩手；保持收腹。</div>
+        </div>
+
+        <div class="item period-hard">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p3_plank" />平板支撑</div>
+            <div class="meta">45秒 × 4组</div>
+          </div>
+          <div class="hint">提示：宁短不塌；保持一条直线。</div>
+        </div>
+
+        <div class="item">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p3_cardio" />有氧：快走 / 原地踏步</div>
+            <div class="meta">20分钟｜能说话但微喘</div>
+          </div>
+          <div class="hint">提示：不拼跑；稳定持续更燃脂。</div>
+        </div>
+      </div>
+
+      <div class="note warn period-note hidden">
+        经期模式开启：周三「核心高强度」建议跳过，改做经期轻恢复（见「经期替换」）。
+      </div>
+    </section>
+
+    <!-- 面板：周四 -->
+    <section class="card panel hidden" id="p4">
+      <div class="head">
+        <h2>周四｜下肢 + 臀（加强）</h2>
+        <span class="badge">40分钟</span>
+      </div>
+
+      <div class="list">
+        <div class="item">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p4_sumo" />相扑蹲</div>
+            <div class="meta">15次 × 4组</div>
+          </div>
+          <div class="hint">提示：脚尖微外；起身夹臀、收腹。</div>
+        </div>
+
+        <div class="item">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p4_lunge" />弓步蹲</div>
+            <div class="meta">12次/边 × 4组</div>
+          </div>
+          <div class="hint">提示：步幅别太大；膝盖跟脚尖同向。</div>
+        </div>
+
+        <div class="item">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p4_single_bridge" />单腿臀桥</div>
+            <div class="meta">12次/边 × 3组</div>
+          </div>
+          <div class="hint">提示：骨盆保持水平；夹臀而不是顶腰。</div>
+        </div>
+
+        <div class="item">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p4_wallsit" />靠墙静蹲</div>
+            <div class="meta">45秒 × 4组</div>
+          </div>
+          <div class="hint">提示：腰贴墙、腹部收紧。</div>
+        </div>
+      </div>
+
+      <div class="note">训练后拉伸 5 分钟。经期建议改为轻活动/拉伸。</div>
+    </section>
+
+    <!-- 面板：周五 -->
+    <section class="card panel hidden" id="p5">
+      <div class="head">
+        <h2>周五｜上肢 + 核心</h2>
+        <span class="badge">35分钟</span>
+      </div>
+
+      <div class="list">
+        <div class="item">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p5_row" />俯身划船（水瓶）</div>
+            <div class="meta">15次 × 4组</div>
+          </div>
+          <div class="hint">提示：肩胛向后夹；背平不耸肩。</div>
+        </div>
+
+        <div class="item">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p5_yt" />俯身 Y–T</div>
+            <div class="meta">12次 × 3组</div>
+          </div>
+          <div class="hint">提示：动作小但稳；感受上背发力。</div>
+        </div>
+
+        <div class="item period-hard">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p5_sideplank" />侧平板</div>
+            <div class="meta">35秒/边 × 3组</div>
+          </div>
+          <div class="hint">提示：身体一条直线；髋别掉。</div>
+        </div>
+
+        <div class="item period-hard">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p5_crunch" />仰卧卷腹</div>
+            <div class="meta">15次 × 3组</div>
+          </div>
+          <div class="hint">提示：卷到肩胛离地即可；别用脖子顶。</div>
+        </div>
+      </div>
+
+      <div class="note warn period-note hidden">经期模式开启：周五可只做上背/划船 + 轻拉伸，核心部分按「经期替换」。</div>
+    </section>
+
+    <!-- 面板：周六 -->
+    <section class="card panel hidden" id="p6">
+      <div class="head">
+        <h2>周六｜全身燃脂（不跳）</h2>
+        <span class="badge">25–30分钟</span>
+      </div>
+
+      <div class="list">
+        <div class="item">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p6_squatpress" />深蹲推手</div>
+            <div class="meta">15次 × 4组</div>
+          </div>
+          <div class="hint">提示：起身呼气、收腹；动作稳不赶。</div>
+        </div>
+
+        <div class="item period-hard">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p6_climber" />登山者（慢）</div>
+            <div class="meta">40秒 × 4组</div>
+          </div>
+          <div class="hint">提示：身体不晃；核心锁住。</div>
+        </div>
+
+        <div class="item">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p6_highknees" />原地高抬腿（低冲击）</div>
+            <div class="meta">45秒 × 4组</div>
+          </div>
+          <div class="hint">提示：脚落地轻；不跳也能喘。</div>
+        </div>
+
+        <div class="item period-hard">
+          <div class="item-top">
+            <div class="item-name"><input type="checkbox" data-save="p6_plank" />平板支撑</div>
+            <div class="meta">35秒 × 4组</div>
+          </div>
+          <div class="hint">提示：质量优先；腰不塌。</div>
+        </div>
+      </div>
+
+      <div class="note warn period-note hidden">经期模式开启：周六燃脂可改为慢走/拉伸（见「经期替换」）。</div>
+    </section>
+
+    <!-- 面板：周日 -->
+    <section class="card panel hidden" id="p7">
+      <div class="head">
+        <h2>周日｜拉伸 / 恢复</h2>
+        <span class="badge">15分钟</span>
+      </div>
+
+      <div class="grid2">
+        <label class="item-name"><input type="checkbox" data-save="p7_quad" />大腿前侧拉伸 30–40秒</label>
+        <label class="item-name"><input type="checkbox" data-save="p7_ham" />腘绳肌拉伸 30–40秒</label>
+        <label class="item-name"><input type="checkbox" data-save="p7_glute" />臀部拉伸 30–40秒</label>
+        <label class="item-name"><input type="checkbox" data-save="p7_full" />全身放松拉伸 15分钟</label>
+      </div>
+
+      <div class="hr"></div>
+      <div class="note">
+        <b>162.5cm 专属提醒：</b><br/>
+        ① 深蹲别蹲太深（大腿接近水平即可） ② 弓步蹲步幅别太大 ③ 平板宁短不塌（30–40秒标准最值）。
+      </div>
+    </section>
+
+    <!-- 面板：经期替换 -->
+    <section class="card panel hidden" id="pp">
+      <div class="head">
+        <h2>经期替换（来月经就按这里）</h2>
+        <span class="badge warn">不硬扛也能瘦</span>
+      </div>
+
+      <div class="item">
+        <div class="item-top">
+          <div class="item-name">🩸 第1–2天（恢复优先）</div>
+          <div class="meta">只选其一即可</div>
+        </div>
+        <div class="grid2" style="margin-top:10px">
+          <label class="item-name"><input type="checkbox" data-save="pp12_stretch" />拉伸 15–20分钟</label>
+          <label class="item-name"><input type="checkbox" data-save="pp12_walk" />慢走 20–30分钟</label>
+          <label class="item-name"><input type="checkbox" data-save="pp12_sleep" />温水 + 早睡</label>
+          <label class="item-name"><input type="checkbox" data-save="pp12_protein" />蛋白质照样 ≥ 70g</label>
+        </div>
+        <div class="hint danger">不做：卷腹/深蹲弓步/长时间平板。</div>
+      </div>
+
+      <div class="item">
+        <div class="item-top">
+          <div class="item-name">🌱 第3–5天（轻恢复）</div>
+          <div class="meta">做2–3轮</div>
+        </div>
+        <div class="grid2" style="margin-top:10px">
+          <label class="item-name"><input type="checkbox" data-save="pp35_bridge" />臀桥 × 15</label>
+          <label class="item-name"><input type="checkbox" data-save="pp35_deadbug" />死虫 × 10/边</label>
+          <label class="item-name"><input type="checkbox" data-save="pp35_arms" />手臂画圈 30秒</label>
+          <label class="item-name"><input type="checkbox" data-save="pp35_walk" />原地慢走 5分钟</label>
+        </div>
+        <div class="hint">当周原计划的「周三核心」「周六燃脂」可直接跳过，保持轻活动即可。</div>
+      </div>
+
+      <div class="item">
+        <div class="item-top">
+          <div class="item-name">🌸 经期结束后1–7天（黄金期）</div>
+          <div class="meta">回归原表，可加量</div>
+        </div>
+        <div class="hint">可选：每个动作 +2~3次 或 当天 +1轮（不必都加）。</div>
+      </div>
+
+      <div class="item">
+        <div class="item-top">
+          <div class="item-name">🔁 排卵后（易水肿）</div>
+          <div class="meta">训练不变，饮食微调</div>
+        </div>
+        <div class="hint">少盐、多水、多拉伸；体重短期↑多是水，不是长胖。</div>
+      </div>
+    </section>
+
+    <!-- 面板：总览图 -->
+    <section class="card panel hidden" id="ov">
+      <div class="head">
+        <h2>总览长图（保存/对照）</h2>
+        <span class="badge">同目录显示</span>
+      </div>
+      <div class="imgbox">
+        <img src="A_fitness_guide_chart_in_Chinese_is_organized_by_d.png" alt="训练长图总览" />
+      </div>
+      <div class="note">看不到图：确认图片名为 <span class="kbd">A_fitness_guide_chart_in_Chinese_is_organized_by_d.png</span> 且与HTML同一文件夹。</div>
+    </section>
+
+    <!-- 面板：周记录 -->
+    <section class="card panel hidden" id="wk">
+      <div class="head">
+        <h2>每周记录（周日填）</h2>
+        <span class="badge">看围度别看斤</span>
+      </div>
+      <div class="grid2">
+        <label class="item-name"><input type="checkbox" data-save="wk_weight" />体重：____ kg</label>
+        <label class="item-name"><input type="checkbox" data-save="wk_waist" />腰围：____ cm</label>
+        <label class="item-name"><input type="checkbox" data-save="wk_thigh" />大腿围：____ cm</label>
+        <label class="item-name"><input type="checkbox" data-save="wk_arm" />手臂围：____ cm</label>
+      </div>
+      <div class="hr"></div>
+      <div class="row">
+        <span class="btn" id="clearBtn">清空所有勾选</span>
+        <span class="pill"><strong>提示</strong> 浏览器里可用：分享→存到文件→随时打开</span>
+      </div>
+      <div class="note">本周感受：________（更有力/更紧/睡眠/经期前水肿等）</div>
+    </section>
+
+  </main>
+
+  <script>
+    // ------- Tab switching -------
+    const tabs = document.querySelectorAll('.tab');
+    const panels = document.querySelectorAll('.panel');
+
+    function showPanel(id){
+      panels.forEach(p => p.classList.toggle('hidden', p.id !== id));
+      tabs.forEach(t => t.classList.toggle('active', t.dataset.panel === id));
+      localStorage.setItem('activePanel', id);
+      window.scrollTo({top: 0, behavior: 'instant'});
+    }
+
+    tabs.forEach(t => {
+      t.addEventListener('click', () => showPanel(t.dataset.panel));
+    });
+
+    const savedPanel = localStorage.getItem('activePanel');
+    if(savedPanel && document.getElementById(savedPanel)){
+      showPanel(savedPanel);
+    }
+
+    // ------- Checkbox persistence -------
+    const checkboxes = document.querySelectorAll('input[type="checkbox"][data-save]');
+    function loadChecks(){
+      checkboxes.forEach(cb => {
+        const key = 'ck_' + cb.dataset.save;
+        cb.checked = localStorage.getItem(key) === '1';
+        cb.addEventListener('change', () => {
+          localStorage.setItem(key, cb.checked ? '1' : '0');
+        });
+      });
+    }
+    loadChecks();
+
+    // ------- Period mode toggle -------
+    const periodToggle = document.getElementById('periodToggle');
+    const periodSaved = localStorage.getItem('periodMode') === '1';
+    periodToggle.checked = periodSaved;
+
+    function applyPeriodMode(on){
+      // 1) hide "period-hard" blocks when on
+      document.querySelectorAll('.period-hard').forEach(el => {
+        el.classList.toggle('hidden', on);
+      });
+      // 2) show period-note hints when on
+      document.querySelectorAll('.period-note').forEach(el => {
+        el.classList.toggle('hidden', !on);
+      });
+      localStorage.setItem('periodMode', on ? '1' : '0');
+    }
+    applyPeriodMode(periodToggle.checked);
+
+    periodToggle.addEventListener('change', () => {
+      applyPeriodMode(periodToggle.checked);
+    });
+
+    // ------- Clear all -------
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      if(!confirm('确定要清空所有勾选记录吗？')) return;
+      // clear only keys we use
+      const keysToRemove = [];
+      for(let i=0;i<localStorage.length;i++){
+        const k = localStorage.key(i);
+        if(k && (k.startsWith('ck_'))) keysToRemove.push(k);
+      }
+      keysToRemove.forEach(k => localStorage.removeItem(k));
+      loadChecks();
+      // reload to reflect
+      document.querySelectorAll('input[type="checkbox"][data-save]').forEach(cb => cb.checked = false);
+    });
+  </script>
+
+</body>
+</html>
